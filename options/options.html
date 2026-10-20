@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stream Inspector settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="../icons/icon48.png" alt="" width="32" height="32">
+      <h1>Stream Inspector</h1>
+      <span id="saved" class="saved" aria-live="polite"></span>
+    </header>
+
+    <section class="card">
+      <h2>Stats panel</h2>
+
+      <label class="setting">
+        <span class="text">
+          <span class="name">Show stats on videos</span>
+          <span class="help">The panel in the corner of each playing video</span>
+        </span>
+        <input type="checkbox" id="overlay">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting">
+        <span class="text">
+          <span class="name">Start collapsed</span>
+          <span class="help">Show only the one-line summary until you expand it</span>
+        </span>
+        <input type="checkbox" id="collapsed">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <div class="setting size">
+        <span class="text">
+          <label class="name" for="scale">Panel size</label>
+          <span class="help">Changes apply to open tabs right away</span>
+        </span>
+        <div class="slider">
+          <input type="range" id="scale" min="60" max="200" step="5">
+          <output id="scale-value" for="scale">100%</output>
+          <button type="button" id="scale-reset" class="link">Reset</button>
+        </div>
+      </div>
+
+      <div class="preview" aria-label="Preview">
+        <div class="preview-video">
+          <div class="panel" id="preview-panel">
+            <div class="head">
+              <span class="dot"></span>
+              <span class="title">1080p60 · VP9 · 4.21 Mbps</span>
+              <span class="btn" id="preview-min">–</span>
+              <span class="btn">×</span>
+            </div>
+            <div class="body">
+              <div class="row"><span class="k">Resolution</span><span class="v">1920×1080 @ 60 fps</span></div>
+              <div class="row"><span class="k">Video</span><span class="v">VP9 · Profile 2 · L4.1 · 10-bit<span class="badge">HDR10 (PQ)</span><span class="sub">vp09.02.41.10.01.09.16.09.00</span></span></div>
+              <div class="row"><span class="k">Audio</span><span class="v">Opus<span class="sub">opus</span></span></div>
+              <div class="row"><span class="k">Bitrate</span><span class="v">4.21 Mbps video · 141 kbps audio</span></div>
+              <div class="row"><span class="k">Dropped</span><span class="v">0 / 8,412 frames (0.00%)</span></div>
+              <div class="row"><span class="k">Source</span><span class="v">MSE · WebM</span></div>
+            </div>
+            <svg class="spark" viewBox="0 0 282 34" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 34 L0 22 L20 20 L40 24 L60 15 L80 18 L100 12 L120 16 L140 9 L160 14 L180 11 L200 17 L220 8 L240 13 L260 10 L282 12 L282 34 Z" fill="rgba(79,209,197,.16)"/>
+              <path d="M0 22 L20 20 L40 24 L60 15 L80 18 L100 12 L120 16 L140 9 L160 14 L180 11 L200 17 L220 8 L240 13 L260 10 L282 12" fill="none" stroke="#4fd1c5" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Keyboard shortcuts</h2>
+        <button type="button" id="keys-reset" class="link">Restore defaults</button>
+      </div>
+      <p class="note">Click a shortcut, then press the new key combination. <kbd>Esc</kbd> cancels, <kbd>Backspace</kbd> removes it.
+        Shortcuts work while a web page is focused (including fullscreen video).</p>
+      <div id="keys" class="keys"></div>
+    </section>
+  </div>
+
+  <script src="../src/shared.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

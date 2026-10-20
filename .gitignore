@@ -1,0 +1,32 @@
+# Packaged builds (zip for the Chrome Web Store, signed .crx)
+*.zip
+*.crx
+dist/
+build/
+
+# Private key Chrome generates when you "Pack extension". Never commit it:
+# anyone with it can publish updates as your extension.
+*.pem
+
+# Dependencies, in case tooling is added later
+node_modules/
+
+# Logs and local env
+*.log
+npm-debug.log*
+.env
+.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local Claude Code settings
+.claude/
