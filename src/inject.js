@@ -237,7 +237,13 @@
     const webm = bytes[0] === 0x1a && bytes[1] === 0x45 && bytes[2] === 0xdf && bytes[3] === 0xa3;
     if (box !== 'ftyp' && box !== 'moov' && !webm) return;
     const found = S.parse(bytes);
-    if (found) info.initCodecs = found.map(x => ({ ...describeCodec(x.codec), raw: x.raw }));
+    if (!found) return;
+    // If the player declared a more specific AAC flavor (HE-AAC v1/v2, xHE)
+    // than the init segment shows, trust the player's string.
+    const declaredAac = info.codecs.find(c => /^mp4a\.40\.(5|29|42)$/i.test(c.raw));
+    info.initCodecs = found.map(x => (declaredAac && /^mp4a\.40\.2$/i.test(x.codec)
+      ? declaredAac
+      : { ...describeCodec(x.codec), raw: x.raw }));
   }
 
   function segmentRate(info) {

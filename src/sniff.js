@@ -18,9 +18,15 @@
     return -1;
   }
 
+  const AAC_RATES = [96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 7350];
+
   // ES_Descriptor -> DecoderConfigDescriptor (object type) -> DecoderSpecificInfo
-  // (AudioSpecificConfig, whose first 5 bits are the audio object type).
-  function esdsCodec(buf, p) {
+  // (AudioSpecificConfig: audio object type, sample rate index, channel config).
+  // entryRate/entryChannels come from the mp4a sample entry and reveal HE-AAC
+  // with implicit signaling, where the config only describes the AAC-LC core:
+  // the core runs at half the output rate (SBR), and v2 adds a mono core that
+  // Parametric Stereo turns into stereo.
+  function esdsCodec(buf, p, entryRate, entryChannels) {
     const skipLen = () => { while (buf[p] & 0x80) p++; p++; };
     if (buf[p++] !== 0x03) return null;
     skipLen();
@@ -36,7 +42,10 @@
     if (oti !== 0x40 || buf[p++] !== 0x05) return `mp4a.${hex2(oti)}`;
     skipLen();
     let aot = buf[p] >> 3;
-    if (aot === 31) aot = 32 + (((buf[p] & 7) << 3) | (buf[p + 1] >> 5));
+    if (aot === 31) return `mp4a.40.${32 + (((buf[p] & 7) << 3) | (buf[p + 1] >> 5))}`;
+    const coreRate = AAC_RATES[((buf[p] & 7) << 1) | (buf[p + 1] >> 7)];
+    const channels = (buf[p + 1] >> 3) & 0x0f;
+    if (aot === 2 && coreRate && entryRate === coreRate * 2) aot = channels === 1 && entryChannels === 2 ? 29 : 5;
     return `mp4a.40.${aot}`;
   }
 
@@ -83,7 +92,10 @@
       } else if (fourcc === 'mp4a') {
         const e = findBytes(buf, 'esds', i);
         let parsed = null;
-        try { if (e !== -1 && e < i + 200) parsed = esdsCodec(buf, e + 8); } catch (_) {}
+        // AudioSampleEntry: channel count at +36, sample rate (16.16) at +44 from the stsd box type
+        const entryChannels = (buf[i + 36] << 8) | buf[i + 37];
+        const entryRate = (buf[i + 44] << 8) | buf[i + 45];
+        try { if (e !== -1 && e < i + 200) parsed = esdsCodec(buf, e + 8, entryRate, entryChannels); } catch (_) {}
         codec = parsed || 'mp4a.40.2';
       }
       out.push({ codec, raw: codec });
